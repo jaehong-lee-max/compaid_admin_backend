@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT,
-    logging: false, // SQL 쿼리 로그를 보려면 true로 변경
+    logging: true, // SQL 쿼리 로그를 보려면 true로 변경
   }
 );
 
