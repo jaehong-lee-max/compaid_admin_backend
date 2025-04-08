@@ -3,7 +3,7 @@ const sequelize = require("./config/database");
 const User = require("./models/user");
 const Notice = require("./models/notice");
 const app = express();
-const PORT = 3000;
+const PORT = 6000;
 
 // JSON 파싱 미들웨어
 app.use(express.json());
