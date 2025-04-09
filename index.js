@@ -1,9 +1,16 @@
 const express = require("express");
+const cors = require("cors");
 const sequelize = require("./config/database");
 const User = require("./models/user");
 const Notice = require("./models/notice");
+const FAQ = require("./models/faq");
+const Comment = require("./models/comment");
+
 const app = express();
-const PORT = 6000;
+const PORT = 3000;
+
+// CORS 허용
+app.use(cors());
 
 // JSON 파싱 미들웨어
 app.use(express.json());
@@ -74,7 +81,6 @@ app.put("/notice/:id", async (req, res) => {
       return res.status(404).json({ error: "Notice not found" });
     }
 
-    // 공지사항 업데이트
     await notice.update({ title, content });
 
     res.json({ message: "Notice updated successfully", notice });
@@ -85,11 +91,7 @@ app.put("/notice/:id", async (req, res) => {
 
 ////////// FAQ api
 
-/* ==========================
-      FAQ 관련 API
-========================== */
-
-//  질문 생성 API
+// 질문 생성 API
 app.post("/faqs", async (req, res) => {
   try {
     const { author, title, content } = req.body;
@@ -100,7 +102,7 @@ app.post("/faqs", async (req, res) => {
   }
 });
 
-//  질문 목록 조회 API
+// 질문 목록 조회 API
 app.get("/faqs", async (req, res) => {
   try {
     const faqs = await FAQ.findAll();
@@ -110,7 +112,7 @@ app.get("/faqs", async (req, res) => {
   }
 });
 
-//  특정 질문 조회 (댓글 포함)
+// 특정 질문 조회 (댓글 포함)
 app.get("/faqs/:id", async (req, res) => {
   try {
     const faq = await FAQ.findByPk(req.params.id, {
@@ -127,7 +129,7 @@ app.get("/faqs/:id", async (req, res) => {
   }
 });
 
-//  질문 수정 API
+// 질문 수정 API
 app.put("/faqs/:id", async (req, res) => {
   try {
     const faq = await FAQ.findByPk(req.params.id);
@@ -141,7 +143,7 @@ app.put("/faqs/:id", async (req, res) => {
   }
 });
 
-//  질문 삭제 API
+// 질문 삭제 API
 app.delete("/faqs/:id", async (req, res) => {
   try {
     const faq = await FAQ.findByPk(req.params.id);
@@ -154,11 +156,9 @@ app.delete("/faqs/:id", async (req, res) => {
   }
 });
 
-/* ==========================
-      댓글 (답변) 관련 API
-========================== */
+////////// 댓글 (답변) 관련 API
 
-//  댓글 생성 API
+// 댓글 생성 API
 app.post("/comments", async (req, res) => {
   try {
     const { faqId, parentId, author, content } = req.body;
@@ -172,7 +172,7 @@ app.post("/comments", async (req, res) => {
   }
 });
 
-//  특정 질문의 댓글 조회 API (대댓글 포함)
+// 특정 질문의 댓글 조회 API (대댓글 포함)
 app.get("/comments/:faqId", async (req, res) => {
   try {
     const comments = await Comment.findAll({
@@ -185,7 +185,7 @@ app.get("/comments/:faqId", async (req, res) => {
   }
 });
 
-//  댓글 수정 API
+// 댓글 수정 API
 app.put("/comments/:id", async (req, res) => {
   try {
     const comment = await Comment.findByPk(req.params.id);
@@ -199,7 +199,7 @@ app.put("/comments/:id", async (req, res) => {
   }
 });
 
-//  댓글 삭제 API
+// 댓글 삭제 API
 app.delete("/comments/:id", async (req, res) => {
   try {
     const comment = await Comment.findByPk(req.params.id);
