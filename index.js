@@ -63,7 +63,9 @@ app.post("/notice", async (req, res) => {
 // 공지사항 목록 조회 API
 app.get("/notice", async (req, res) => {
   try {
-    const notice = await Notice.findAll();
+    const notice = await Notice.findAll({
+      order: [["createdAt", "DESC"]], // 최신순 정렬
+    });
     res.json(notice);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -84,6 +86,31 @@ app.put("/notice/:id", async (req, res) => {
     await notice.update({ title, content });
 
     res.json({ message: "Notice updated successfully", notice });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 공지사항 삭제 API
+app.delete("/notice/:id", async (req, res) => {
+  try {
+    const notice = await Notice.findByPk(req.params.id);
+    if (!notice) return res.status(404).json({ error: "Notice not found" });
+
+    await notice.destroy();
+    res.json({ message: "Notice deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 공지사항 단건 조회 API
+app.get("/notice/:id", async (req, res) => {
+  try {
+    const notice = await Notice.findByPk(req.params.id);
+    if (!notice) return res.status(404).json({ error: "Notice not found" });
+
+    res.json(notice);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
